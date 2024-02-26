@@ -1,0 +1,79 @@
+service: swapi-api-translated
+
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  region: us-east-1
+  iamRoleStatements:
+    - Effect: Allow
+      Action: 
+        - dynamodb:*
+      Resource:
+        - arn:aws:dynamodb:us-east-1:520809732982:table/filmsTable
+plugins:
+  - serverless-auto-swagger
+  - serverless-offline
+
+functions:
+  hello:
+    handler: src/hello.hello
+    events:
+      - httpApi:
+          path: /
+          method: get
+
+  getFilms:
+    handler: src/functions/films/getFilms.getFilms
+    events:
+      - httpApi:
+          path: /films
+          method: get
+  getFilm:
+    handler: src/functions/films/getFilm.getFilm
+    events:
+      - httpApi:
+          path: /films/{id}
+          method: get
+  saveFilm:
+    handler: src/functions/films/saveFilm.saveFilm
+    events:
+      - httpApi:
+          path: /films
+          method: post
+  getDynamoFilms:
+    handler: src/functions/films/getDynamoFilms.getDynamoFilms
+    events:
+      - httpApi:
+          path: /films/dynamo
+          method: get
+
+  getPeople:
+    handler: src/functions/people/getPeople.getPeople
+    events:
+      - httpApi:
+          path: /people
+          method: get
+  getPeopleById:
+    handler: src/functions/people/getPeopleById.getPeopleById
+    events:
+      - httpApi:
+          path: /people/{id}
+          method: get
+    
+
+
+resources:
+  Resources:
+    filmsTable: 
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: filmsTable
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: filmId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: filmId
+            KeyType: HASH
