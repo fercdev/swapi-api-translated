@@ -13,7 +13,6 @@ provider:
       Resource:
         - arn:aws:dynamodb:us-east-1:520809732982:table/filmsTable
 plugins:
-  - serverless-auto-swagger
   - serverless-offline
 
 functions:
